@@ -1,25 +1,32 @@
 import { Redirect, Route, Switch } from "react-router-dom";
+import Layout from "./components/layout/Layout";
 import AllQuote from "./pages/AllQuote";
 import DetailsQuote from "./pages/DetailsQuote";
+import F404 from "./pages/F404";
 import NewQuote from "./pages/NewQuote";
 
 function App() {
   return (
-    <Switch>
-      <Route path="/" exact>
-        <Redirect to="/quotes"></Redirect>
-      </Route>
+    <Layout>
+      <Switch>
+        <Route path="/" exact>
+          <Redirect to="/quotes"></Redirect>
+        </Route>
 
-      <Route path="/quotes" exact>
-        <AllQuote />
-      </Route>
-      <Route path="/quotes/:Qid">
-        <DetailsQuote />
-      </Route>
-      <Route path="/new-quote">
-        <NewQuote />
-      </Route>
-    </Switch>
+        <Route path="/quotes" exact>
+          <AllQuote />
+        </Route>
+        <Route path="/quotes/:Qid">
+          <DetailsQuote />
+        </Route>
+        <Route path="/new-quote">
+          <NewQuote />
+        </Route>
+        <Route path="*">
+          <F404 />
+        </Route>
+      </Switch>
+    </Layout>
   );
 }
 
