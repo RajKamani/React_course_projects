@@ -1,4 +1,5 @@
 import { useContext, useRef, useState } from "react";
+import { isDOMComponentElement } from "react-dom/cjs/react-dom-test-utils.production.min";
 import AuthContext from "../../store/auth-context";
 import classes from "./ProfileForm.module.css";
 
@@ -6,10 +7,13 @@ const ProfileForm = () => {
   const newPass = useRef();
   const auth = useContext(AuthContext);
   const [success, setSuccess] = useState(false);
+  const [IsError, setIsError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const passchnageHandler = (event) => {
     event.preventDefault();
 
     const newPassText = newPass.current.value;
+    setIsLoading(true);
     fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCi_fc3V-qahtwki-iDLIAMShwVBJWxs48",
       {
@@ -25,13 +29,14 @@ const ProfileForm = () => {
         return res.json();
       })
       .then((data) => {
+        setIsLoading(false);
         console.log(data.idToken);
         if (data.idToken) {
           setSuccess(true);
         }
 
         if (data.error) {
-          alert(data.error.errors[0].message);
+          setIsError(data.error.errors[0].message);
         }
       })
       .catch((err) => {
@@ -47,6 +52,8 @@ const ProfileForm = () => {
       <div className={classes.action}>
         <button>Change Password</button>
         {success && <h3 style={{ color: "Green" }}>Password updated!</h3>}
+        {isLoading && <h3 style={{ color: "Green" }}>Wait...</h3>}
+        {IsError && <h3 style={{ color: "RED" }}>{IsError}</h3>}
       </div>
     </form>
   );
