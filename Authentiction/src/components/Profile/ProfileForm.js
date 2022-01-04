@@ -1,7 +1,7 @@
 import { useContext, useRef, useState } from "react";
-import { isDOMComponentElement } from "react-dom/cjs/react-dom-test-utils.production.min";
 import AuthContext from "../../store/auth-context";
 import classes from "./ProfileForm.module.css";
+import { API_KEY } from "../../secure";
 
 const ProfileForm = () => {
   const newPass = useRef();
@@ -9,13 +9,15 @@ const ProfileForm = () => {
   const [success, setSuccess] = useState(false);
   const [IsError, setIsError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const passchnageHandler = (event) => {
     event.preventDefault();
 
     const newPassText = newPass.current.value;
     setIsLoading(true);
     fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCi_fc3V-qahtwki-iDLIAMShwVBJWxs48",
+      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=" +
+        API_KEY,
       {
         method: "POST",
         body: JSON.stringify({
@@ -30,9 +32,9 @@ const ProfileForm = () => {
       })
       .then((data) => {
         setIsLoading(false);
-        console.log(data.idToken);
         if (data.idToken) {
           setSuccess(true);
+          auth.changePass(data.idToken);
         }
 
         if (data.error) {

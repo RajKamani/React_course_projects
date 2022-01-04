@@ -1,5 +1,6 @@
 import { useState, useRef, useContext } from "react";
 import AuthContext from "../../store/auth-context";
+import { API_KEY } from "../../secure";
 
 import classes from "./AuthForm.module.css";
 const fetchAPI = (url, setIsFetching, emailText, passwordText, auth) => {
@@ -15,7 +16,9 @@ const fetchAPI = (url, setIsFetching, emailText, passwordText, auth) => {
       return res.json();
     })
     .then((data) => {
-      auth.login(data.idToken);
+      console.log(data);
+      const expTime = new Date(new Date().getTime() + +data.expiresIn * 100);
+      auth.login(data.idToken, expTime.toISOString());
       setIsFetching(false);
       if (data.error) {
         alert(data.error.errors[0].message);
@@ -48,7 +51,8 @@ const AuthForm = () => {
     setIsFetching(true);
     if (isLogin) {
       fetchAPI(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCi_fc3V-qahtwki-iDLIAMShwVBJWxs48",
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" +
+          API_KEY,
         setIsFetching,
         emailText,
         passwordText,
@@ -56,7 +60,8 @@ const AuthForm = () => {
       );
     } else {
       fetchAPI(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCi_fc3V-qahtwki-iDLIAMShwVBJWxs48",
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" +
+          API_KEY,
         setIsFetching,
         emailText,
         passwordText,
